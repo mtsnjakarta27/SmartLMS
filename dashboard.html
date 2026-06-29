@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartLMS - Premium Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f8fafc] font-sans flex h-screen overflow-hidden text-slate-800">
+
+<div class="w-64 bg-white/80 backdrop-blur-xl h-full border-r border-slate-200/60 flex flex-col justify-between p-6">
+
+    <!-- TOP SECTION -->
+    <div>
+
+        <!-- LOGO (INI YANG BENAR) -->
+        <div class="flex items-center space-x-2 mb-8 px-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">
+                🎓
+            </div>
+            <span class="text-xl font-bold text-indigo-900">SmartLMS</span>
+        </div>
+
+        <!-- NAVIGATION -->
+        <nav class="space-y-1">
+
+            <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-indigo-50 text-indigo-600 font-semibold">
+                🏠 <span>Dashboard</span>
+            </a>
+
+            <a href="materi_siswa.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
+                📖 <span>Mata Pelajaran</span>
+            </a>
+
+            <a href="tugas.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
+                📝 <span>Tugas</span>
+            </a>
+
+            <a href="forum.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
+                💬 <span>Forum</span>
+            </a>
+
+        </nav>
+    </div>
+
+    <div id="profileCard" class="mt-6 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-2xl p-4">
+    <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-white text-indigo-700 flex items-center justify-center font-bold text-lg">
+            👨‍🎓
+        </div>
+        <div>
+            <h3 id="namaUser" class="font-bold">
+                Loading...
+            </h3>
+            <p id="kelasUser"
+            class="text-xs text-indigo-100">
+                Loading...
+            </p>
+        </div>
+    </div>
+</div>
+
+    <!-- BOTTOM -->
+    <div class="border-t border-slate-100 pt-4">
+        <button id="logoutBtn" class="w-full bg-rose-50 text-rose-600 py-2 rounded-xl font-semibold">
+            🚪 Keluar
+        </button>
+    </div>
+
+</div>
+
+    <!-- MAIN INTERFACE LAYOUT -->
+    <div class="flex-1 h-full overflow-y-auto p-6 lg:p-8">
+        <div class="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-4 gap-6">
+            
+            <!-- COLUMN LEFT & CENTER (TAKES 3 COLUMNS) -->
+            <div class="xl:col-span-3 space-y-6">
+                
+                <!-- BANNER WELCOME ASLI + LIVE CLOCK INTEGRATION -->
+                <div class="bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-950 p-6 rounded-3xl text-white shadow-sm flex justify-between items-center relative overflow-hidden">
+                    <div class="z-10">
+                        <h1 class="text-2xl font-black tracking-tight">Selamat Datang, <span id="welcomeName">wiena</span>! 👋</h1>
+                        <p class="text-indigo-200 text-xs mt-1">Kamu memiliki 2 tugas aktif dan 1 kuis yang belum diikuti minggu ini.</p>
+                    </div>
+                    <!-- LIVE CLOCK WIDGET -->
+                    <div class="text-right z-10 bg-black/20 px-4 py-2 rounded-2xl border border-white/10 backdrop-blur-sm">
+                        <div id="liveClock" class="text-lg font-black tracking-widest text-white">10:09 AM</div>
+                        <div id="liveDate" class="text-[9px] font-bold text-indigo-300 uppercase tracking-wider mt-0.5">Kamis, 25 Jun 2026</div>
+                    </div>
+                    <!-- Decorative Icon Element from Original -->
+                    <div class="text-4xl opacity-80 hidden md:block select-none pointer-events-none">📚</div>
+                </div>
+
+                <!-- 3 CARDS TOP STATS (SAMA PERSIS DENGAN ORIGINAL) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- JAM BELAJAR -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center text-lg">⏱️</div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">JAM BELAJAR</p>
+                            <h3 class="text-lg font-black text-slate-700 mt-0.5">24.5 Jam</h3>
+                        </div>
+                    </div>
+                    <!-- RATA-RATA NILAI -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center text-lg">📊</div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">RATA-RATA NILAI</p>
+                            <h3 class="text-lg font-black text-slate-700 mt-0.5">92 / 100</h3>
+                        </div>
+                    </div>
+                    <!-- KEHADIRAN PRESENSI -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center text-lg">✅</div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">KEHADIRAN PRESENSI</p>
+                            <h3 class="text-lg font-black text-slate-700 mt-0.5">98.2%</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROGRESS PEMENUHAN KURIKULUM (SEKARANG ADA 4 MAPEL) -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2"><span>📊</span> Progres Pemenuhan Kurikulum</h3>
+                    <div class="space-y-4 pt-2">
+                        <!-- Matematika -->
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+                                <span>Matematika</span><span>68%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-indigo-600 h-full w-[68%] rounded-full"></div>
+                            </div>
+                        </div>
+                        <!-- Fisika -->
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+                                <span>Fisika</span><span>45%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-[45%] rounded-full"></div>
+                            </div>
+                        </div>
+                        <!-- Sejarah (Baru ditambahkan) -->
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+                                <span>Sejarah</span><span>30%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-amber-500 h-full w-[30%] rounded-full"></div>
+                            </div>
+                        </div>
+                        <!-- Bahasa Indonesia (Baru ditambahkan) -->
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+                                <span>Bahasa Indonesia</span><span>82%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-rose-500 h-full w-[82%] rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM CONTAINER: TUGAS MENDATANG & PENGUMUMAN AUDIT INTERNAL -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- TUGAS MENDATANG -->
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between space-y-4">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><span>🔔</span> Tugas Mendatang</h4>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <h5 class="font-bold text-slate-700 text-xs">Latihan Soal Desil & Persentil</h5>
+                            <p class="text-[10px] text-slate-400 font-medium mt-1">Deadline: 8 Hari Lagi</p>
+                        </div>
+                        <a href="tugas.html" class="w-full block text-center bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-bold py-3 rounded-xl transition shadow-sm">
+                            Buka Portal Tugas
+                        </a>
+                    </div>
+
+                    <!-- PENGUMUMAN KELAS (ISO AUDIT INTERNAL) -->
+                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-3">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><span>📌</span> Pengumuman Kelas</h4>
+                        <div class="border-l-4 border-amber-500 pl-3 py-1 space-y-1">
+                            <h5 class="font-bold text-slate-700 text-xs">Pemberitahuan Audit Internal</h5>
+                            <p class="text-slate-400 text-[11px] leading-relaxed">Peninjauan manajemen mutu ISO sekolah akan dimulai senin depan.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMN RIGHT (TAKES 1 COLUMN) - JADWAL & AI INTERAKTIF -->
+            <div class="space-y-6">
+                
+                <!-- JADWAL HARI INI -->
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2"><span>📅</span> Jadwal Hari Ini</h4>
+                    <div class="space-y-3">
+                        <!-- Matematika -->
+                        <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-100/60">
+                            <div>
+                                <div class="text-[11px] font-black text-slate-700">07:30 - 09:00</div>
+                                <div class="text-[10px] text-slate-400 mt-0.5">Matematika - Ruang 11</div>
+                            </div>
+                            <span class="text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-lg">Aktif</span>
+                        </div>
+                        <!-- Fisika -->
+                        <div class="flex justify-between items-center p-3 rounded-2xl border border-dashed border-slate-100">
+                            <div>
+                                <div class="text-[11px] font-bold text-slate-500">09:15 - 10:45</div>
+                                <div class="text-[10px] text-slate-400 mt-0.5">Fisika - Lab Fisika</div>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-400 px-2 py-1">Nanti</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI SMART ASSISTANT INTERAKTIF (WARNA ASLI PREMIUM) -->
+                <div class="bg-[#1e1b4b] rounded-3xl p-5 text-white flex flex-col h-[340px] justify-between shadow-lg shadow-indigo-950/20">
+                    <div class="border-b border-white/10 pb-3 flex items-center space-x-2">
+                        <span class="text-lg">🤖</span>
+                        <h4 class="font-black text-xs uppercase tracking-wider">AI Smart Assistant</h4>
+                    </div>
+
+                    <!-- Chat Bubbles Area -->
+                    <div id="chatBox" class="flex-1 overflow-y-auto my-3 space-y-3 pr-1 text-xs">
+                        <div class="bg-white/10 p-3 rounded-2xl rounded-tl-none border border-white/5">
+                            <span class="text-[9px] text-emerald-400 font-bold block mb-1">● ONLINE TUTOR GPT</span>
+                            Halo! Ada kesulitan pengerjaan tugas atau butuh rangkuman rumus cepat? Tulis di bawah!
+                        </div>
+                    </div>
+
+                    <!-- Chat Form Input -->
+                    <form id="aiWidgetForm" class="flex items-center gap-1.5 bg-white/5 p-1 rounded-xl border border-white/10">
+                        <input type="text" id="aiInputText" placeholder="Tanya rumus desil, hukum newton..." required autocomplete="off"
+                            class="flex-1 bg-transparent text-xs px-2.5 py-2 focus:outline-none placeholder-white/40 text-white">
+                        <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-2 rounded-lg text-xs font-black transition flex-shrink-0">
+                            Kirim
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "https://yvfjhrlfgmrsfutsnfcr.supabase.co";
+const supabaseKey = "sb_publishable_8Dqg47ovewX9f9Ogz8no2w_bWcrUTRI";
+
+const supabaseClient = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+);
+</script>
+
+    <!-- UTILITY JAVASCRIPT ENGINE -->
+    <script>
+    async function loadProfile() {
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("userLogin")
+        );
+
+    if (!user) {
+        window.location.href = "login_siswa.html";
+        return;
+    }
+
+    document.getElementById(
+        "welcomeName"
+    ).innerText = user.nama;
+
+    document.getElementById(
+        "namaUser"
+    ).innerText = user.nama;
+
+    document.getElementById(
+        "kelasUser"
+    ).innerText =
+        "NISN : " + user.username;
+}
+
+loadProfile();
+
+        // 2. LIVE CLOCK SYSTEM (MENGIKUTI JAM LAPTOP/HP REAL-TIME)
+        function runLiveClock() {
+            const timeNow = new Date();
+            let hours = timeNow.getHours();
+            let minutes = timeNow.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            document.getElementById('liveClock').innerText = `${hours}:${minutes} ${ampm}`;
+
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            
+            document.getElementById('liveDate').innerText = `${days[timeNow.getDay()]}, ${timeNow.getDate()} ${months[timeNow.getMonth()]} ${timeNow.getFullYear()}`;
+        }
+        setInterval(runLiveClock, 1000);
+        runLiveClock();
+
+        // 3. CORE CHAT ENGINE
+        const widgetForm = document.getElementById('aiWidgetForm');
+        const aiInputText = document.getElementById('aiInputText');
+        const chatBox = document.getElementById('chatBox');
+
+        widgetForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userMsg = aiInputText.value.trim();
+            if(!userMsg) return;
+
+            // Render User Bubble
+            const userBubble = document.createElement('div');
+            userBubble.className = "bg-amber-500/20 text-amber-200 border border-amber-500/20 p-3 rounded-2xl rounded-tr-none text-right";
+            userBubble.innerText = userMsg;
+            chatBox.appendChild(userBubble);
+            
+            aiInputText.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Simulated AI Assistant Engine
+            setTimeout(() => {
+                const aiBubble = document.createElement('div');
+                aiBubble.className = "bg-white/10 p-3 rounded-2xl rounded-tl-none border border-white/5";
+                
+                let answer = "Pertanyaan hebat! Coba cek modul materi lengkapnya di halaman 'Mata Pelajaran' sebelah kiri ya.";
+                const lowerMsg = userMsg.toLowerCase();
+
+                if(lowerMsg.includes('desil') || lowerMsg.includes('persentil') || lowerMsg.includes('interpolasi')) {
+                    answer = "Untuk hitungan desil dan persentil data kelompok, rumusnya menggunakan interpolasi linier: $D_i = Tb + \\left(\\frac{\\frac{i}{10}n - Fk}{f}\\right)p$. Rumus lengkapnya ada di tugas aktif kamu!";
+                } else if(lowerMsg.includes('newton') || lowerMsg.includes('hukum') || lowerMsg.includes('fisika')) {
+                    answer = "Hukum II Newton menyatakan $F = m \\cdot a$. Pastikan kamu mengulas modul praktikum di Lab Fisika ya!";
+                } else if(lowerMsg.includes('iso') || lowerMsg.includes('audit')) {
+                    answer = "Audit internal penjaminan mutu pendidikan berbasis ISO akan mengevaluasi pemenuhan standar dokumen kelas semester ini.";
+                }
+
+                aiBubble.innerHTML = `<span class="text-[9px] text-emerald-400 font-bold block mb-1">● ONLINE TUTOR GPT</span>${answer}`;
+                chatBox.appendChild(aiBubble);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 600);
+        });
+
+        // 4. LOGOUT EVENT
+        document
+        .getElementById("logoutBtn")
+        .addEventListener("click",function(){
+
+            localStorage.removeItem("userLogin");
+
+            window.location.href="login_siswa.html";
+
+        });
+    </script>
+</body>
+</html>

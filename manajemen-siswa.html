@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-white font-sans flex min-h-screen">
+
+    <div class="w-72 bg-slate-900 border-r border-slate-800 p-6 flex-shrink-0">
+        
+        <h2 class="text-2xl font-black text-emerald-400 mb-10">SmartLMS Guru</h2>
+        <nav class="space-y-3 flex-1">
+    <a href="dashboard-guru-utama.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold transition"> 🏠 Dashboard </a>
+    <a href="materi.html" class="block w-full text-left p-4 hover:bg-slate-800 rounded-2xl font-bold transition">📚 Materi & Modul</a>
+    <a href="manajemen-siswa.html" class="block w-full p-4 bg-emerald-600 rounded-2xl font-bold transition">👥 Manajemen Siswa</a>
+    <a href="diskusi.html" class="block w-full text-left p-4 hover:bg-slate-800 rounded-2xl font-bold transition">💬 Ruang Diskusi</a>
+    <a href="penugasan.html" class="block w-full text-left p-4 hover:bg-slate-800 rounded-2xl font-bold transition">📄 Penugasan</a>
+    <a href="pengumpulan_tugas.html" class="block w-full text-left p-4 hover:bg-slate-800 rounded-2xl font-bold transition">📑 Pengumpulan Tugas</a>
+    
+        </nav>
+        <div class="mt-10 pt-6 border-t border-slate-800">
+             <a href="login_guru.html"
+                class="block text-center text-red-400 hover:text-red-300 font-semibold">
+                Logout
+            </a>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl mt-6">
+
+    <p id="namaProfile"
+       class="font-bold">
+    </p>
+
+    <p id="nipProfile"
+       class="text-xs text-slate-400">
+    </p>
+
+</div>
+    </div>
+    
+    <main class="flex-1 p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-black">Manajemen Siswa</h1>
+            <button class="bg-slate-700 px-6 py-2 rounded-xl font-bold cursor-not-allowed">
+                Total Siswa: <span id="jumlahSiswa">0</span>
+            </button>
+        </div>
+        
+        <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-slate-400 border-b border-slate-800">
+                        <th class="pb-4">Nama Siswa</th>
+                        <th class="pb-4">Kehadiran</th>
+                        <th class="pb-4">Progres Belajar</th>
+                        <th class="pb-4">Status Tugas</th>
+                        <th class="pb-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelSiswa" class="text-sm">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "https://yvfjhrlfgmrsfutsnfcr.supabase.co";
+const supabaseKey = "sb_publishable_8Dqg47ovewX9f9Ogz8no2w_bWcrUTRI";
+
+const { createClient } = supabase;
+
+const supabaseClient = createClient(
+    supabaseUrl,
+    supabaseKey
+);
+</script>
+<script>
+async function loadSiswa() {
+
+    const { data, error } = await supabaseClient
+        .from("users")
+        .select("*")
+        .eq("role", "siswa");
+
+    if(error){
+        console.log(error);
+        return;
+    }
+
+    const table =
+    document.getElementById("tabelSiswa");
+
+table.innerHTML = "";
+
+document.getElementById("jumlahSiswa").innerText =
+    data.length;
+
+    data.forEach(siswa => {
+
+        table.innerHTML += `
+<tr class="border-b border-slate-800 hover:bg-slate-800 transition">
+
+    <td class="py-4">
+        ${siswa.nama}
+    </td>
+
+    <td class="py-4 text-slate-400">
+        -
+    </td>
+
+    <td class="py-4">
+        <div class="w-full bg-slate-700 rounded-full h-3">
+            <div class="bg-emerald-500 h-3 rounded-full w-0"></div>
+        </div>
+    </td>
+
+    <td class="py-4 text-yellow-400">
+        Belum Ada Tugas
+    </td>
+
+    <td class="py-4">
+        <button class="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500">
+            Detail
+        </button>
+    </td>
+
+</tr>
+`;
+    });
+}
+
+loadSiswa();
+</script>
+<script>
+const raw = localStorage.getItem("userLogin");
+
+console.log("RAW:", raw);
+
+if(raw){
+
+    const user = JSON.parse(raw);
+
+    console.log("USER:", user);
+
+    document.getElementById("namaProfile").innerText =
+        user.nama ?? "-";
+
+    document.getElementById("nipProfile").innerText =
+        "NIP : " + (user.username ?? user.nip ?? "-");
+}
+</script>
+</body>
+</html>

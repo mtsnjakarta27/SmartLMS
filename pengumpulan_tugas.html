@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-white font-sans flex min-h-screen">
+
+    <div class="w-72 bg-slate-900 border-r border-slate-800 p-6 flex-shrink-0">
+        <h2 class="text-2xl font-black text-emerald-400 mb-10">SmartLMS Guru</h2>
+        <nav class="space-y-3">
+            <a href="dashboard-guru-utama.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">🏠 Dashboard</a>
+            <a href="materi.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">📚 Materi & Modul</a>
+            <a href="manajemen-siswa.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">👥 Manajemen Siswa</a>
+            <a href="diskusi.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">💬 Ruang Diskusi</a>
+            <a href="penugasan.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">📄 Penugasan</a>
+            <a href="pengumpulan_tugas.html" class="block w-full p-4 bg-emerald-600 rounded-2xl font-bold">📑 Pengumpulan Tugas</a>
+        </nav>
+        <div class="mt-10 pt-6 border-t border-slate-800">
+             <a href="login_guru.html"
+                class="block text-center text-red-400 hover:text-red-300 font-semibold">
+                Logout
+            </a>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl mt-6">
+    <p id="namaProfile" class="font-bold"></p>
+    <p id="nipProfile" class="text-xs text-slate-400"></p>
+</div>
+    </div>
+
+    <main class="flex-1 p-10 bg-slate-950">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-black">📑 Pengumpulan Tugas</h1>
+
+        <div class="text-sm text-slate-400">
+            Pantau semua tugas yang dikumpulkan siswa
+        </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="flex gap-4 mb-6">
+        <select class="bg-slate-900 border border-slate-700 px-4 py-2 rounded-xl">
+            <option>Semua Tugas</option>
+            <option>Belum Dinilai</option>
+            <option>Sudah Dinilai</option>
+        </select>
+
+        <input type="text"
+               placeholder="Cari nama siswa..."
+               class="flex-1 bg-slate-900 border border-slate-700 px-4 py-2 rounded-xl outline-none">
+    </div>
+
+    <!-- LIST PENGUMPULAN -->
+    <div
+    id="listPengumpulan"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    </div>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = " https://yvfjhrlfgmrsfutsnfcr.supabase.co";
+const supabaseKey = "sb_publishable_8Dqg47ovewX9f9Ogz8no2w_bWcrUTRI";
+
+const { createClient } = supabase;
+const supabaseClient = createClient(supabaseUrl, supabaseKey);
+</script>
+    
+    <script>
+const raw = localStorage.getItem("userLogin");
+
+console.log("RAW:", raw);
+
+if(raw){
+
+    const user = JSON.parse(raw);
+
+    console.log("USER:", user);
+
+    document.getElementById("namaProfile").innerText =
+        user.nama ?? "-";
+
+    document.getElementById("nipProfile").innerText =
+        "NIP : " + (user.username ?? user.nip ?? "-");
+}
+</script>
+<script>
+
+async function loadPengumpulan(){
+
+    const { data, error } =
+        await supabaseClient
+        .from("pengumpulan_tugas")
+        .select(`
+            *,
+            users(nama),
+            tugas(judul)
+        `)
+        .order(
+            "created_at",
+            { ascending:false }
+        );
+
+    if(error){
+        console.log(error);
+        return;
+    }
+
+    const container =
+        document.getElementById(
+            "listPengumpulan"
+        );
+
+    container.innerHTML = "";
+
+    data.forEach(item => {
+
+        container.innerHTML += `
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl">
+
+            <div class="flex justify-between items-center mb-3">
+
+                <h2 class="font-bold">
+                    ${item.users?.nama || '-'}
+                </h2>
+
+                <span class="
+                    text-xs
+                    px-2
+                    py-1
+                    rounded-full
+                    ${
+                        item.status === 'submitted'
+                        ? 'bg-yellow-500 text-black'
+                        : 'bg-emerald-500 text-black'
+                    }
+                ">
+                    ${item.status}
+                </span>
+
+            </div>
+
+            <p class="text-sm text-slate-400 mb-3">
+                Tugas:
+                ${item.tugas?.judul || '-'}
+            </p>
+
+            <a
+                href="${item.file_url}"
+                target="_blank"
+                class="text-emerald-400 text-sm">
+
+                📄 Lihat File
+            </a>
+
+            ${
+                item.nilai
+                ? `
+                    <div class="mt-4 flex justify-between text-sm">
+                        <span>Nilai</span>
+                        <span class="font-bold text-emerald-400">
+                            ${item.nilai}
+                        </span>
+                    </div>
+                `
+                : ''
+            }
+
+        </div>
+        `;
+    });
+}
+
+loadPengumpulan();
+
+</script>
+</body>
+</html>

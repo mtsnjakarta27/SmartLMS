@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* PENTING: Pastikan wallpaper.jpg ada di folder yang sama */
+        body { 
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('wpp1.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass p-12 rounded-[2rem] shadow-2xl w-full max-w-lg text-center mx-4">
+        <h1 class="text-4xl font-black text-slate-800 mb-2">SmartLMS</h1>
+        <p class="text-slate-500 font-bold mb-10">Pilih akses Anda untuk memulai</p>
+        
+        <div class="grid grid-cols-2 gap-6">
+            <a href="login_siswa.html" class="bg-indigo-600 hover:bg-indigo-700 text-white p-8 rounded-3xl transition-all transform hover:scale-105 shadow-lg">
+                <div class="text-4xl mb-3">🎓</div>
+                <span class="font-black text-lg">Siswa</span>
+            </a>
+            
+            <a href="login_guru.html" class="bg-emerald-600 hover:bg-emerald-700 text-white p-8 rounded-3xl transition-all transform hover:scale-105 shadow-lg">
+                <div class="text-4xl mb-3">👨‍🏫</div>
+                <span class="font-black text-lg">Guru</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f8fafc] font-sans flex h-screen overflow-hidden">
+<div class="w-64 bg-white/80 backdrop-blur-xl h-full border-r border-slate-200/60 flex flex-col justify-between p-6">
+
+    <!-- TOP SECTION -->
+    <div>
+
+        <!-- LOGO (INI YANG BENAR) -->
+        <div class="flex items-center space-x-2 mb-8 px-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">
+                🎓
+            </div>
+            <span class="text-xl font-bold text-indigo-900">SmartLMS</span>
+        </div>
+
+        <!-- NAVIGATION -->
+        <nav class="space-y-1">
+
+            <a href="dashboard.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
+                🏠 <span>Dashboard</span>
+            </a>
+
+            <a href="materi_siswa.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
+                📖 <span>Mata Pelajaran</span>
+            </a>
+
+            <a href="tugas.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-indigo-50 text-indigo-600 font-semibold">
+                📝 <span>Tugas</span>
+            </a>
+
+            <a href="forum.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50">
+                💬 <span>Forum</span>
+            </a>
+
+        </nav>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="border-t border-slate-100 pt-4">
+        <button id="logoutBtn" class="w-full bg-rose-50 text-rose-600 py-2 rounded-xl font-semibold">
+            🚪 Keluar
+        </button>
+    </div>
+
+</div>
+    <!-- MAIN CONTENT -->
+<div class="flex-1 overflow-y-auto p-8">
+<div class="max-w-6xl mx-auto space-y-8">
+
+        <!-- HEADER -->
+        <div class="bg-gradient-to-r from-indigo-700 via-indigo-800 to-violet-700 rounded-3xl p-8 text-white shadow-lg">
+            <h1 class="text-3xl font-black flex items-center gap-3">
+                📝 Tugas Pembelajaran
+            </h1>
+
+            <p class="mt-3 text-indigo-100 max-w-2xl">
+                Kerjakan seluruh tugas yang diberikan dosen sebelum batas waktu
+                pengumpulan. Pastikan file yang diupload sesuai dengan instruksi.
+            </p>
+        </div>
+
+        <div id="listTugas" class="space-y-6"></div>
+
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "https://yvfjhrlfgmrsfutsnfcr.supabase.co";
+const supabaseKey = "sb_publishable_8Dqg47ovewX9f9Ogz8no2w_bWcrUTRI";
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+</script>
+<script>
+async function loadTugasSiswa() {
+
+    const { data, error } = await supabaseClient
+        .from("tugas")
+        .select("*")
+        .order("created_at", { ascending:false });
+
+    if(error){
+        console.log(error);
+        return;
+    }
+
+    const container = document.getElementById("listTugas");
+    container.innerHTML = "";
+
+    data.forEach(tugas => {
+
+        container.innerHTML += `
+        <div class="bg-white rounded-3xl shadow-sm border p-8">
+
+            <span class="bg-indigo-100 text-indigo-600 text-xs font-bold px-4 py-2 rounded-full">
+                📚 Tugas
+            </span>
+
+            <h2 class="text-2xl font-black mt-5">
+                ${tugas.judul}
+            </h2>
+
+            <p class="text-slate-500 mt-2">
+                ${tugas.deskripsi || "-"}
+            </p>
+
+            <div class="mt-4 text-sm text-rose-500 font-bold">
+                Deadline: ${tugas.deadline}
+            </div>
+
+            <input
+                type="file"
+                id="file-${tugas.id}"
+                class="mt-4 w-full border p-2 rounded-xl">
+
+            <button
+                onclick="uploadTugas('${tugas.id}')"
+                class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-xl">
+
+                📤 Kumpulkan
+
+            </button>
+
+        </div>
+        `;
+    });
+}
+
+loadTugasSiswa();
+</script>
+<script>
+
+async function uploadTugas(tugasId){
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("userLogin")
+        );
+
+    const fileInput =
+        document.getElementById(
+            `file-${tugasId}`
+        );
+
+    const file =
+        fileInput.files[0];
+
+    if(!file){
+        alert("Pilih file dulu");
+        return;
+    }
+
+    const namaFile =
+        `${user.id}-${Date.now()}-${file.name}`;
+
+    const { data: uploadData, error: uploadError } =
+    await supabaseClient.storage
+    .from("tugas-siswa")
+    .upload(
+        namaFile,
+        file
+    );
+
+console.log("UPLOAD DATA:", uploadData);
+console.log("UPLOAD ERROR:", uploadError);
+
+    if(uploadError){
+        alert(uploadError.message);
+        return;
+    }
+
+    const { data } =
+        supabaseClient.storage
+        .from("tugas-siswa")
+        .getPublicUrl(namaFile);
+
+    const fileUrl =
+        data.publicUrl;
+
+    const { data: insertData, error } =
+    await supabaseClient
+    .from("pengumpulan_tugas")
+    .insert([
+        {
+            tugas_id: tugasId,
+            user_id: user.id,
+            file_url: fileUrl,
+            status: "submitted"
+        }
+    ]);
+
+console.log("INSERT DATA:", insertData);
+console.log("INSERT ERROR:", error);
+
+    if(error){
+        alert(error.message);
+        return;
+    }
+
+    alert("Tugas berhasil dikumpulkan");
+
+}
+
+</script>
+</body>
+</html>

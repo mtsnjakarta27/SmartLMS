@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartLMS Guru</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<style>
+.glass{
+    background: rgba(15,23,42,0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgb(51 65 85);
+}
+</style>
+<body class="bg-gray-900 text-white flex min-h-screen">
+
+    <div class="w-72 bg-slate-900 border-r border-slate-800 p-6 flex-shrink-0">
+        <h2 class="text-2xl font-black text-emerald-400 mb-10">SmartLMS Guru</h2>
+        <nav class="space-y-3">
+            <a href="dashboard-guru-utama.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold transition"> 🏠 Dashboard </a>
+            <a href="materi.html" class="block w-full p-4 bg-emerald-600 rounded-2xl font-bold transition"> 📚 Materi & Modul </a>
+            <a href="manajemen-siswa.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold transition"> 👥 Manajemen Siswa </a>
+            <a href="diskusi.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold transition"> 💬 Ruang Diskusi </a>
+            <a href="penugasan.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold transition"> 📄 Penugasan </a>
+            <a href="pengumpulan_tugas.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold transition"> 📑 Pengumpulan Tugas </a>
+        </nav>
+        <div class="mt-10 pt-6 border-t border-slate-800">
+             <a href="login_guru.html"
+                class="block text-center text-red-400 hover:text-red-300 font-semibold">
+                Logout
+            </a>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl mt-6">
+
+    <p id="namaProfile"
+       class="font-bold">
+    </p>
+
+    <p id="nipProfile"
+       class="text-xs text-slate-400">
+    </p>
+
+</div>
+    </div>
+        
+    <main class="flex-grow p-10 bg-gray-950">
+        <h1 class="text-3xl font-bold mb-8">Pusat Materi & Modul</h1>
+
+        <div class="glass p-6 rounded-3xl shadow-xl max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold mb-5">
+        Upload Materi Baru
+    </h2>
+
+    <input
+    id="judulMateri"
+    type="text"
+    placeholder="Judul Materi"
+    class="w-full p-3 rounded-xl mb-4 bg-gray-800 border border-gray-700 text-white placeholder-gray-400">
+
+    <textarea
+    id="deskripsiMateri"
+    placeholder="Deskripsi Materi"
+    class="w-full p-3 rounded-xl mb-4 bg-gray-800 border border-gray-700 text-white placeholder-gray-400">
+</textarea>
+
+    <input
+        id="fileMateri"
+        type="file"
+        class="w-full mb-4">
+
+    <button
+        onclick="uploadMateri()"
+        class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold">
+        Upload Materi
+    </button>
+</div>
+<h2 class="text-2xl font-bold mt-12 mb-6 text-white">
+    Daftar Materi
+</h2>
+        <div id="containerMateri"
+            class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const supabaseUrl = "https://yvfjhrlfgmrsfutsnfcr.supabase.co";
+const supabaseKey = "sb_publishable_8Dqg47ovewX9f9Ogz8no2w_bWcrUTRI";
+
+const { createClient } = supabase;
+
+const supabaseClient =
+    createClient(
+        supabaseUrl,
+        supabaseKey
+    );
+
+</script>
+<script>
+
+async function loadMateri(){
+
+    const { data, error } =
+        await supabaseClient
+        .from("materi")
+        .select("*")
+        .order("created_at", { ascending:false });
+
+    if(error){
+        console.log(error);
+        return;
+    }
+
+    const container = document.getElementById("containerMateri");
+    container.innerHTML = "";
+
+    data.forEach(item => {
+        container.innerHTML += `
+            <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800">
+
+                <h3 class="text-xl font-bold mb-2">
+                    ${item.judul}
+                </h3>
+
+                <p class="text-gray-400 mb-4">
+                    ${item.deskripsi || "-"}
+                </p>
+
+                <a href="${item.file_url}" target="_blank"
+                   class="text-emerald-400">
+                   📄 Buka Materi
+                </a>
+
+            </div>
+        `;
+    });
+}
+
+loadMateri();
+</script>
+
+
+<script>
+
+window.uploadMateri = async function () {
+
+    console.log("UPLOAD CLICKED");
+
+    const judul = document.getElementById("judulMateri").value;
+    const deskripsi = document.getElementById("deskripsiMateri").value;
+    const file = document.getElementById("fileMateri").files[0];
+
+    if(!judul || !file){
+        alert("Judul dan file wajib diisi");
+        return;
+    }
+
+    const namaFile = Date.now() + "_" + file.name;
+
+    const { error: uploadError } =
+        await supabaseClient.storage
+        .from("materi")
+        .upload(namaFile, file);
+
+    if(uploadError){
+        alert(uploadError.message);
+        return;
+    }
+
+    const { data } =
+        supabaseClient.storage
+        .from("materi")
+        .getPublicUrl(namaFile);
+
+    const fileUrl = data.publicUrl;
+
+    const { error: dbError } =
+        await supabaseClient
+        .from("materi")
+        .insert([
+    {
+        judul,
+        deskripsi,
+        file_url: fileUrl,
+        kelas: "XII IPA 1" // atau ambil dari user login nanti
+    }
+    ]);
+
+    if(dbError){
+        alert(dbError.message);
+        return;
+    }
+
+    alert("Materi berhasil diupload");
+    loadMateri();
+}
+
+</script>
+
+<script>
+const raw = localStorage.getItem("userLogin");
+
+console.log("RAW:", raw);
+
+if(raw){
+
+    const user = JSON.parse(raw);
+
+    console.log("USER:", user);
+
+    document.getElementById("namaProfile").innerText =
+        user.nama ?? "-";
+
+    document.getElementById("nipProfile").innerText =
+        "NIP : " + (user.username ?? user.nip ?? "-");
+}
+</script>
+</body>
+</html>

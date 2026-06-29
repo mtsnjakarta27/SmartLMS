@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-white font-sans flex min-h-screen">
+
+    <div class="w-72 bg-slate-900 border-r border-slate-800 p-6 flex-shrink-0">
+        <h2 class="text-2xl font-black text-emerald-400 mb-10">SmartLMS Guru</h2>
+        <nav class="space-y-3">
+            <a href="dashboard-guru-utama.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">🏠 Dashboard</a>
+            <a href="materi.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">📚 Materi & Modul</a>
+            <a href="manajemen-siswa.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">👥 Manajemen Siswa</a>
+            <a href="diskusi.html" class="block w-full p-4 bg-emerald-600 rounded-2xl font-bold">💬 Ruang Diskusi</a>
+            <a href="penugasan.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">📄 Penugasan</a>
+            <a href="pengumpulan_tugas.html" class="block w-full text-left p-4 hover:bg-slate-800 rounded-2xl font-bold transition">📑 Pengumpulan Tugas</a>
+        </nav>
+        <div class="mt-10 pt-6 border-t border-slate-800">
+             <a href="login_guru.html"
+                class="block text-center text-red-400 hover:text-red-300 font-semibold">
+                Logout
+            </a>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl mt-6">
+    <p id="namaProfile" class="font-bold"></p>
+    <p id="nipProfile" class="text-xs text-slate-400"></p>
+</div>
+    </div>
+
+    <main class="flex-1 flex flex-col h-screen">
+        <header class="p-6 border-b border-slate-800 flex justify-between items-center">
+            <h1 class="text-2xl font-black">Ruang Diskusi</h1>
+            <select id="topikDiskusi" onchange="gantiTopik()" class="bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl font-bold outline-none cursor-pointer">
+                <option value="Matematika">Matematika</option>
+                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                <option value="Sejarah">Sejarah</option>
+            </select>
+        </header>
+
+        <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4">
+            </div>
+
+        <div class="p-6 border-t border-slate-800 flex gap-4">
+            <input id="inputChat" type="text" placeholder="Ketik pesan..." class="flex-1 bg-slate-900 border border-slate-700 p-4 rounded-2xl outline-none focus:border-emerald-500">
+            <button onclick="kirimPesan()" class="bg-emerald-600 px-8 rounded-2xl font-bold hover:bg-emerald-500">Kirim</button>
+        </div>
+        
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl =
+"https://yvfjhrlfgmrsfutsnfcr.supabase.co";
+
+const supabaseKey =
+"sb_publishable_8Dqg47ovewX9f9Ogz8no2w_bWcrUTRI";
+
+const { createClient } = supabase;
+
+const supabaseClient =
+createClient(
+    supabaseUrl,
+    supabaseKey
+);
+</script>
+<script>
+
+async function loadPesan(){
+
+    const topik =
+        document.getElementById("topikDiskusi").value;
+
+    const { data, error } =
+    await supabaseClient
+    .from("diskusi")
+    .select("*")
+    .eq("topik", topik)
+    .order("created_at", {
+        ascending: true
+    });
+
+    if(error){
+        console.log(error);
+        return;
+    }
+
+    const chatBox =
+        document.getElementById("chatBox");
+
+    chatBox.innerHTML = "";
+
+    const currentUser =
+JSON.parse(localStorage.getItem("userLogin"));
+
+data.forEach(item => {
+
+    chatBox.innerHTML += `
+        <div class="${
+            item.user_id === currentUser.id
+                ? 'text-right'
+                : 'text-left'
+        }">
+
+            <div class="
+                inline-block
+                max-w-lg
+                p-4
+                rounded-2xl
+                ${
+                    item.role === "guru"
+                        ? 'bg-emerald-600'
+                        : 'bg-slate-800'
+                }
+            ">
+                    <p class="text-xs font-bold text-emerald-300 mb-2">
+                        ${item.nama_pengirim}
+                    </p>
+
+                    <p>
+                        ${item.pesan}
+                    </p>
+
+                </div>
+
+            </div>
+        `;
+    });
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+}
+
+loadPesan();
+setInterval(loadPesan, 2000);
+
+</script>
+
+    <script>
+        // 3. Fungsi Ganti Topik
+        function gantiTopik(){
+            loadPesan();
+        }
+
+        // 4. Fungsi Kirim
+        async function kirimPesan(){
+
+    const input =
+        document.getElementById("inputChat");
+
+    const topik =
+        document.getElementById("topikDiskusi").value;
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("userLogin")
+        );
+
+        if(!user){
+        alert("Session login tidak ditemukan");
+        window.location.href="login_guru.html";
+        return;
+}
+    
+    if(input.value.trim() === "")
+        return;
+
+    const { error } =
+        await supabaseClient
+        .from("diskusi")
+        .insert([
+            {
+                user_id: user.id,
+                nama_pengirim: user.nama,
+                role: user.role,
+                topik: topik,
+                pesan: input.value
+            }
+        ]);
+
+    if(error){
+        alert(error.message);
+        return;
+    }
+
+    input.value = "";
+
+    loadPesan();
+}
+
+    </script>
+    <script>
+const raw = localStorage.getItem("userLogin");
+
+console.log("RAW:", raw);
+
+if(raw){
+
+    const user = JSON.parse(raw);
+
+    console.log("USER:", user);
+
+    document.getElementById("namaProfile").innerText =
+        user.nama ?? "-";
+
+    document.getElementById("nipProfile").innerText =
+        "NIP : " + (user.username ?? user.nip ?? "-");
+}
+
+supabaseClient
+.channel("diskusi-room")
+.on(
+    "postgres_changes",
+    {
+        event:"INSERT",
+        schema:"public",
+        table:"diskusi"
+    },
+    payload => {
+        loadPesan();
+    }
+)
+.subscribe();
+</script>
+</body>
+</html>

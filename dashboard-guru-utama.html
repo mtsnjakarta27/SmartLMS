@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 min-h-screen flex text-white">
+
+<!-- SIDEBAR -->
+<div class="w-72 bg-slate-900 border-r border-slate-800 p-6 flex flex-col">
+
+    <h2 class="text-2xl font-black text-emerald-400 mb-10">
+        SmartLMS Guru
+    </h2>
+
+    <nav class="space-y-3">
+        <a href="dashboard-guru-utama.html"
+           class="block w-full p-4 bg-emerald-600 rounded-2xl font-bold">
+            🏠 Dashboard
+        </a>
+
+        <a href="materi.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">
+            📚 Materi & Modul
+        </a>
+
+        <a href="manajemen-siswa.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">
+            👥 Manajemen Siswa
+        </a>
+
+        <a href="diskusi.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">
+            💬 Ruang Diskusi
+        </a>
+
+        <a href="penugasan.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">
+            📄 Penugasan
+        </a>
+
+        <a href="pengumpulan_tugas.html" class="block w-full p-4 hover:bg-slate-800 rounded-2xl font-bold">
+            📑 Pengumpulan Tugas
+        </a>
+    </nav>
+<!-- LOGOUT -->
+    <div class="mt-10 pt-6 border-t border-slate-800">
+             <a href="login_guru.html"
+                class="block text-center text-red-400 hover:text-red-300 font-semibold">
+                Logout
+            </a>
+            </div>
+    <!-- PROFILE -->
+    <div class="bg-slate-800 p-4 rounded-xl mt-6">
+
+    <p id="namaProfile"
+       class="font-bold">
+    </p>
+
+    <p id="nipProfile"
+       class="text-xs text-slate-400">
+    </p>
+</div>
+    
+
+</div>
+<!-- MAIN CONTENT -->
+<div class="flex-1 p-10">
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h1 id="namaGuruDashboard"
+                    class="text-3xl font-black">
+                </h1>
+                <p class="text-slate-400 font-bold">Siap memantau kelas hari ini?</p>
+            </div>
+            <!-- Progress Bar -->
+            <div class="bg-slate-800 p-4 rounded-2xl w-64 border border-slate-700">
+                <div class="flex justify-between text-xs font-bold mb-2"><span>Target Mingguan</span><span>3/5 Kelas</span></div>
+                <div class="w-full bg-slate-700 h-2 rounded-full"><div class="bg-indigo-500 h-2 rounded-full w-[60%]"></div></div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="grid grid-cols-4 gap-6 mb-8">
+            <div class="bg-indigo-600 p-6 rounded-3xl"><p class="text-indigo-200 text-xs font-bold">Total Siswa</p><h2 class="text-3xl font-black mt-1">150</h2></div>
+            <div class="bg-emerald-600 p-6 rounded-3xl"><p class="text-emerald-200 text-xs font-bold">Materi Aktif</p><h2 class="text-3xl font-black mt-1">24</h2></div>
+            <div class="bg-sky-500 p-6 rounded-3xl"><p class="text-sky-100 text-xs font-bold">Nilai Rata-rata</p><h2 class="text-3xl font-black mt-1">89.2</h2></div>
+            <div class="bg-amber-500 p-6 rounded-3xl"><p class="text-amber-100 text-xs font-bold">Streak Mengajar</p><h2 class="text-3xl font-black mt-1">12 Hari</h2></div>
+        </div>
+
+        <!-- DEADLINE & AI -->
+        <div class="grid grid-cols-2 gap-8">
+            <div class="bg-slate-800 p-8 rounded-3xl border border-slate-700">
+                <h3 class="font-bold mb-4">Deadline Terdekat</h3>
+                <div class="bg-slate-900 p-4 rounded-2xl flex justify-between">
+                    <p class="font-bold">Esai Sejarah Nusantara</p>
+                    <span class="text-rose-400 font-bold text-xs">2 Hari lagi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+const raw = localStorage.getItem("userLogin");
+
+if (!raw) {
+    window.location.href = "login_guru.html";
+}
+
+const user = JSON.parse(raw);
+
+document.getElementById("namaGuruDashboard").innerText =
+    "Halo, " + user.nama + " 👋";
+
+document.getElementById("namaProfile").innerText =
+    user.nama || "-";
+
+document.getElementById("nipProfile").innerText =
+    "NIP: " + (user.username || "-");
+
+</script>
+</body>
+</html>
